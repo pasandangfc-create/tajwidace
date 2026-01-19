@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tajwid Ace</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #musicControl {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      width: 55px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    #musicControl:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,1);
+    }
+
+    /* ===== ACE CHARACTER ===== */
+    .ace-character {
+      margin-top: 10px;
+      position: relative;
+      display: none;
+    }
+    #aceImg {
+      width: 160px;
+      animation: aceBody 0.6s infinite alternate;
+    }
+    #aceMouth {
+      position: absolute;
+      width: 26px;
+      height: 6px;
+      background: #8b0000;
+      border-radius: 0 0 12px 12px;
+      left: 50%;
+      top: 63%;
+      transform: translateX(-50%);
+      transition: height 0.08s ease;
+    }
+    @keyframes aceBody {
+      from { transform: translateY(0); }
+      to { transform: translateY(-4px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="feedbackOverlay"></div>
+
+  <!-- HALAMAN AWAL -->
+  <section id="home" class="scene active">
+    <div class="home-content">
+      <h1 class="title"> <span></span></h1>
+      <p class="subtitle"></p>
+      <button id="startBtn" class="btn green">MULAI</button>
+    </div>
+  </section>
+
+  <!-- MENU UTAMA -->
+  <section id="menu" class="scene">
+    <div class="menu-box new-style">
+      <button class="btn main-btn" data-target="material">MATERI</button>
+      <button class="btn main-btn" data-target="quiz">QUIZ</button>
+      <button class="btn main-btn" data-target="learn">AYO BELAJAR</button>
+
+      <div class="bottom-buttons">
+        <button class="btn main-btn small" data-target="levels">LEVEL MAP</button>
+        <button class="btn main-btn small" data-target="rules">ATURAN MAIN</button>
+      </div>
+      <button id="exitBtn" class="btn exit-btn">KELUAR APLIKASI</button>
+    </div>
+  </section>
+
+  <!-- ATURAN -->
+  <section id="rules" class="scene">
+    <div class="panel white">
+      <h2>Aturan Main — Panduan Lengkap</h2>
+      <p>Tajwid Ace memiliki 5 level, tiap level terdiri dari 10 soal teks atau audio. Untuk naik level, minimal 7 benar.</p>
+      <ol>
+        <li>Skor +10 setiap jawaban benar.</li>
+        <li>3 nyawa per level.</li>
+        <li>Soal audio akan muncul tombol ▶️ Putar Audio.</li>
+        <li>Progres tersimpan otomatis.</li>
+      </ol>
+      <button class="btn green" data-target="menu">Kembali</button>
+    </div>
+  </section>
+
+  <!-- MATERI -->
+  <section id="material" class="scene">
+    <div class="panel white">
+      <h2>Materi Singkat</h2>
+      <p>Pelajari hukum bacaan tajwid seperti mad, ikhfa’, idgham, dan iqlab sebelum bermain.</p>
+      <div class="img-box">
+        <img src="img/materi.png" alt="Materi Tajwid" class="info-img" />
+      </div>
+      <a href="https://drive.google.com/file/d/102qbVILOZJ7yrrSgrogKphfuxRnJzj0C/view?usp=drive_link"
+         target="_blank" class="btn green">📘 Buka Materi Lengkap</a>
+      <br><br>
+      <button class="btn green" data-target="menu">Kembali</button>
+    </div>
+  </section>
+
+  <!-- AYO BELAJAR -->
+  <section id="learn" class="scene">
+    <div class="panel white">
+      <h2>Ayo Belajar Tajwid</h2>
+
+      <div id="cardBox" class="card-box"></div>
+
+      <audio id="cardAudio" controls style="width:100%;margin-top:10px;"></audio>
+
+      <!-- ACE CHARACTER -->
+      <div id="aceCharacter" class="ace-character">
+        <img id="aceImg" src="img/ace.png">
+        <div id="aceMouth"></div>
+      </div>
+
+      <div class="card-nav">
+        <button id="prevCard" class="btn small">⬅ Sebelumnya</button>
+        <button id="nextCard" class="btn small">Berikutnya ➡</button>
+      </div>
+
+      <br>
+      <button class="btn green" data-target="menu">Kembali</button>
+    </div>
+  </section>
+
+  <!-- PILIH LEVEL -->
+  <section id="levels" class="scene">
+    <div class="panel white">
+      <h2>Pilih Level</h2>
+      <div id="levelsGrid" class="levels-grid"></div>
+      <br>
+      <button class="btn green" data-target="menu">Kembali</button>
+    </div>
+  </section>
+
+  <!-- KUIS -->
+  <section id="quiz" class="scene">
+    <div class="hud">
+      <span id="levelName">Level 1</span>
+      <span id="score">Skor : 0</span>
+      <span id="lives">❤️ 3</span>
+    </div>
+    <div class="question-box">
+      <div id="audioBox"></div>
+      <div id="questionText" class="question">Pertanyaan muncul di sini</div>
+      <div id="choiceList" class="choices"></div>
+    </div>
+    <div class="controls">
+      <button id="quitBtn" class="btn small">Keluar</button>
+    </div>
+  </section>
+
+  <!-- HASIL -->
+  <section id="result" class="scene">
+    <div class="panel white">
+      <h2>Hasil Level</h2>
+      <p>Skor : <span id="finalScore">0</span></p>
+      <p>Benar : <span id="correctCount">0</span>/10</p>
+      <div id="resultButtons"></div>
+    </div>
+  </section>
+
+  <!-- BACKSOUND -->
+  <div id="musicControl" title="Musik Latar">🔊</div>
+  <audio id="bgMusic" src="audio/backsound.mp3" loop></audio>
+
+  <script src="script.js"></script>
+
+  <script>
+    // ===== KONTROL BACKSOUND =====
+    const musicBtn = document.getElementById("musicControl");
+    const bgMusic = document.getElementById("bgMusic");
+    let musicOn = false;
+
+    musicBtn.addEventListener("click", () => {
+      if (!musicOn) {
+        bgMusic.play();
+        musicOn = true;
+        musicBtn.textContent = "🔈";
+      } else {
+        bgMusic.pause();
+        musicOn = false;
+        musicBtn.textContent = "🔊";
+      }
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      bgMusic.play().catch(() => {});
+      musicOn = true;
+      musicBtn.textContent = "🔈";
+    });
+
+    const observer = new MutationObserver(() => {
+      const quizActive = document.getElementById("quiz").classList.contains("active");
+      if (quizActive) {
+        bgMusic.pause();
+        musicBtn.textContent = "🔊";
+        musicOn = false;
+      } else {
+        if (!musicOn) {
+          bgMusic.play().catch(() => {});
+          musicBtn.textContent = "🔈";
+          musicOn = true;
+        }
+      }
+    });
+
+    const scenes = document.querySelectorAll(".scene");
+    scenes.forEach(scene => {
+      observer.observe(scene, { attributes: true, attributeFilter: ["class"] });
+    });
+
+    /* ===== ACE SINKRON AUDIO ===== */
+    const cardAudio = document.getElementById("cardAudio");
+    const ace = document.getElementById("aceCharacter");
+    const mouth = document.getElementById("aceMouth");
+
+    let audioCtx, analyser, source, dataArray;
+
+    cardAudio.addEventListener("play", () => {
+      ace.style.display = "block";
+
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      source = audioCtx.createMediaElementSource(cardAudio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+
+      analyser.fftSize = 256;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      animateMouth();
+    });
+
+    cardAudio.addEventListener("pause", stopAce);
+    cardAudio.addEventListener("ended", stopAce);
+
+    function stopAce(){
+      ace.style.display = "none";
+      mouth.style.height = "6px";
+      if(audioCtx) audioCtx.close();
+    }
+
+    function animateMouth(){
+      if(cardAudio.paused || cardAudio.ended) return;
+
+      analyser.getByteFrequencyData(dataArray);
+      let volume = dataArray.reduce((a,b)=>a+b)/dataArray.length;
+
+      let mouthHeight = Math.min(22, Math.max(6, volume/6));
+      mouth.style.height = mouthHeight + "px";
+
+      requestAnimationFrame(animateMouth);
+    }
+  </script>
+</body>
+</html>
